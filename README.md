@@ -10,6 +10,11 @@ For RUNTIME only(For clients using exe)
 set as per instructions at https://gstreamer.freedesktop.org/documentation/installing/on-windows.html?gi-language=c
 
 Add to Path %GSTREAMER_1_0_ROOT_X86_64%bin
+
+Also VCRUNTIME if not already installed
+https://support.microsoft.com/en-in/help/2977003/the-latest-supported-visual-c-downloads
+https://aka.ms/vs/16/release/vc_redist.x64.exe
+
 =======================================================================
 For Secure RTSP Client on Windows Set:
 As suggested at https://gitlab.freedesktop.org/gstreamer/cerbero/issues/190
