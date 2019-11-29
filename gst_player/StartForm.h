@@ -3,8 +3,7 @@
 #include <string>
 
 namespace impl_funcs {
-	int playRtspUrlVideo(std::string rtsp_url);
-	void addLogTextLine(std::string text);
+	int playRtspUrlVideo(std::string rtsp_url, bool secure, std::string username, std::string password, std::string cert, std::string key);
 }
 
 namespace gstplayer {
@@ -312,29 +311,34 @@ namespace gstplayer {
 			return;
 		}
 		/* Check for secure details if enabled*/
+		std::string username;
+		std::string password;
+		std::string certificate;
+		std::string key;
 		if (secure_check->Checked) {
-			std::string username = msclr::interop::marshal_as<std::string>(username_text->Text);
+			username = msclr::interop::marshal_as<std::string>(username_text->Text);
 			if (username.empty()) {
 				MessageBox::Show("Invalid Username", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 				return;
 			}
-			std::string password = msclr::interop::marshal_as<std::string>(password_text->Text);
+			password = msclr::interop::marshal_as<std::string>(password_text->Text);
 			if (password.empty()) {
 				MessageBox::Show("Invalid Password", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 				return;
 			}
-			std::string certificate = msclr::interop::marshal_as<std::string>(certificate_text->Text);
+			certificate = msclr::interop::marshal_as<std::string>(certificate_text->Text);
 			if (certificate.empty()) {
 				MessageBox::Show("Invalid Certificate", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 				return;
 			}
-			std::string key = msclr::interop::marshal_as<std::string>(key_text->Text);
+			key = msclr::interop::marshal_as<std::string>(key_text->Text);
 			if (key.empty()) {
 				MessageBox::Show("Invalid Key", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 				return;
 			}
 		}
-		int ret = impl_funcs::playRtspUrlVideo(msclr::interop::marshal_as<std::string>(rtsp_url_text->Text));
+		int ret = impl_funcs::playRtspUrlVideo(msclr::interop::marshal_as<std::string>(rtsp_url_text->Text),
+			secure_check->Checked, username, password, certificate, key);
 		return;
 	}
 	private: System::Void textBox1_TextChanged(System::Object^  sender, System::EventArgs^  e) {
