@@ -22,10 +22,13 @@ int impl_funcs::playRtspUrlVideo(std::string rtsp_url) {
 	/* Initialize GStreamer */
 	gst_init(NULL, NULL);
 
+	addLogTextLine("Starting Pipeline ... ");
+
 	/* Build the pipeline */
 	const std::string pipeline_str = "rtspsrc location=" + rtsp_url + " ! rtph264depay ! avdec_h264 ! autovideosink ";
-	pipeline = gst_parse_launch(pipeline_str.c_str(),NULL);
+	pipeline = gst_parse_launch(pipeline_str.c_str(), NULL);
 
+	addLogTextLine("Set Pipeline PLAYING ");
 	/* Start playing */
 	gst_element_set_state(pipeline, GST_STATE_PLAYING);
 
@@ -42,4 +45,9 @@ int impl_funcs::playRtspUrlVideo(std::string rtsp_url) {
 	gst_element_set_state(pipeline, GST_STATE_NULL);
 	gst_object_unref(pipeline);
 	return 0;
+}
+
+void impl_funcs::addLogTextLine(std::string text) {
+	gstplayer::StartForm::startFormInstance->log_text->AppendText(gcnew String(text.c_str()));
+	gstplayer::StartForm::startFormInstance->log_text->AppendText("\r\n");
 }
