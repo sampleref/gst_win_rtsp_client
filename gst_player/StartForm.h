@@ -4,6 +4,7 @@
 
 namespace impl_funcs {
 	int playRtspUrlVideo(std::string rtsp_url, bool secure, std::string username, std::string password, std::string cert, std::string key);
+	void setEnvironmentVariable(System::String^ variable, System::String^ value);
 }
 
 namespace gstplayer {
@@ -72,6 +73,10 @@ namespace gstplayer {
 
 	private: System::Windows::Forms::OpenFileDialog^  openFileDialog1;
 	public: System::Windows::Forms::TextBox^  log_text;
+	private: System::Windows::Forms::Label^  label6;
+	private: System::Windows::Forms::TextBox^  gst_debug_text;
+	private: System::Windows::Forms::Button^  gst_debug_button;
+	public:
 
 
 
@@ -88,6 +93,7 @@ namespace gstplayer {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(StartForm::typeid));
 			this->rtsp_url_text = (gcnew System::Windows::Forms::TextBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->play_button = (gcnew System::Windows::Forms::Button());
@@ -105,6 +111,9 @@ namespace gstplayer {
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->openFileDialog1 = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->log_text = (gcnew System::Windows::Forms::TextBox());
+			this->label6 = (gcnew System::Windows::Forms::Label());
+			this->gst_debug_text = (gcnew System::Windows::Forms::TextBox());
+			this->gst_debug_button = (gcnew System::Windows::Forms::Button());
 			this->secure_details->SuspendLayout();
 			this->SuspendLayout();
 			// 
@@ -273,11 +282,42 @@ namespace gstplayer {
 			this->log_text->Size = System::Drawing::Size(304, 162);
 			this->log_text->TabIndex = 5;
 			// 
+			// label6
+			// 
+			this->label6->AutoSize = true;
+			this->label6->Location = System::Drawing::Point(32, 317);
+			this->label6->Name = L"label6";
+			this->label6->Size = System::Drawing::Size(290, 20);
+			this->label6->TabIndex = 6;
+			this->label6->Text = L"GStreamer Log Level (GST_DEBUG)";
+			this->label6->Click += gcnew System::EventHandler(this, &StartForm::label6_Click);
+			// 
+			// gst_debug_text
+			// 
+			this->gst_debug_text->Location = System::Drawing::Point(328, 317);
+			this->gst_debug_text->Name = L"gst_debug_text";
+			this->gst_debug_text->Size = System::Drawing::Size(284, 26);
+			this->gst_debug_text->TabIndex = 7;
+			this->gst_debug_text->Text = L"3";
+			// 
+			// gst_debug_button
+			// 
+			this->gst_debug_button->Location = System::Drawing::Point(628, 317);
+			this->gst_debug_button->Name = L"gst_debug_button";
+			this->gst_debug_button->Size = System::Drawing::Size(151, 26);
+			this->gst_debug_button->TabIndex = 8;
+			this->gst_debug_button->Text = L"Apply";
+			this->gst_debug_button->UseVisualStyleBackColor = true;
+			this->gst_debug_button->Click += gcnew System::EventHandler(this, &StartForm::gst_debug_button_Click);
+			// 
 			// StartForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(10, 20);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(791, 327);
+			this->ClientSize = System::Drawing::Size(791, 385);
+			this->Controls->Add(this->gst_debug_button);
+			this->Controls->Add(this->gst_debug_text);
+			this->Controls->Add(this->label6);
 			this->Controls->Add(this->log_text);
 			this->Controls->Add(this->secure_details);
 			this->Controls->Add(this->secure_check);
@@ -287,9 +327,10 @@ namespace gstplayer {
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->ForeColor = System::Drawing::Color::Indigo;
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->Margin = System::Windows::Forms::Padding(4);
 			this->Name = L"StartForm";
-			this->Text = L"StartForm";
+			this->Text = L"RTSP Player";
 			this->Load += gcnew System::EventHandler(this, &StartForm::StartForm_Load);
 			this->secure_details->ResumeLayout(false);
 			this->secure_details->PerformLayout();
@@ -380,6 +421,11 @@ namespace gstplayer {
 			secure_details->Visible = FALSE;
 		}
 
+	}
+	private: System::Void label6_Click(System::Object^  sender, System::EventArgs^  e) {
+	}
+	private: System::Void gst_debug_button_Click(System::Object^  sender, System::EventArgs^  e) {
+		impl_funcs::setEnvironmentVariable("GST_DEBUG", gst_debug_text->Text);
 	}
 	};
 }

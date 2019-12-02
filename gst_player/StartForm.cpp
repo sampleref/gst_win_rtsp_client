@@ -10,6 +10,17 @@ using namespace System::Windows::Forms;
 void Main(array<String^>^ args) {
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
+
+	/*Default GStreamer Log Level*/
+	Environment::SetEnvironmentVariable("GST_DEBUG", "3");
+
+	/* To Enable Custom Console Writer */
+	/*
+	ConsoleWriter^ consoleWriter = gcnew ConsoleWriter();
+	Console::SetOut(consoleWriter);
+	Console::SetError(consoleWriter);
+	*/
+
 	//gstplayer is your project name
 	gstplayer::StartForm form;
 	Application::Run(%form);
@@ -20,6 +31,11 @@ int playSimpleRtspUrl(std::string rtsp_url);
 int impl_funcs::playRtspUrlVideo(std::string rtsp_url, bool secure, std::string username, std::string password, std::string cert, std::string key) {
 	return rtspClient::playRtspUrl(rtsp_url, secure, username, password, cert, key);
 	//return playSimpleRtspUrl(rtsp_url);
+}
+
+void impl_funcs::setEnvironmentVariable(System::String^ variable, System::String^ value) {
+	Environment::SetEnvironmentVariable(variable, value);
+	MessageBox::Show("Environment variable set successfully", "Done", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
 }
 
 int playSimpleRtspUrl(std::string rtsp_url) {
