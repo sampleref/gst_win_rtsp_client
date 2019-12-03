@@ -104,9 +104,9 @@ int rtspClient::playRtspUrl(std::string rtspUrl, bool secure, std::string userna
 	GstElement *pipeline;
 	GstElement *rtspsrc;
 	GstElement *rtph264depay;
-	GstElement *h264parse;
+//	GstElement *h264parse;
 	GstElement *avdec_h264;
-	GstElement *videoqueue0;
+//	GstElement *videoqueue0;
 	GstElement *videoconvert;
 	GstElement *video_sink; /* The video sink element which receives XOverlay commands */
 
@@ -125,12 +125,12 @@ int rtspClient::playRtspUrl(std::string rtspUrl, bool secure, std::string userna
 	//Video elements
 	rtph264depay = gst_element_factory_make("rtph264depay", "rtph264depay0");
 	g_assert(rtph264depay);
-	h264parse = gst_element_factory_make("h264parse", "h264parse0");
-	g_assert(h264parse);
+	//h264parse = gst_element_factory_make("h264parse", "h264parse0");
+	//g_assert(h264parse);
 	avdec_h264 = gst_element_factory_make("decodebin", "avdec_h2640");
 	g_assert(avdec_h264);
-	videoqueue0 = gst_element_factory_make("queue", "videoqueue0");
-	g_assert(videoqueue0);
+	//videoqueue0 = gst_element_factory_make("queue", "videoqueue0");
+	//g_assert(videoqueue0);
 	videoconvert = gst_element_factory_make("videoconvert", "videoconvert0");
 	g_assert(videoconvert);
 	//Video Sink
@@ -141,7 +141,7 @@ int rtspClient::playRtspUrl(std::string rtspUrl, bool secure, std::string userna
 
 	/* Set video Source */
 	g_object_set(G_OBJECT(rtspsrc), "location", rtspUrl.c_str(), NULL);
-	g_object_set(G_OBJECT(rtspsrc), "do-rtcp", TRUE, NULL);
+	g_object_set(G_OBJECT(rtspsrc), "drop-on-latency", TRUE, NULL);
 	g_object_set(G_OBJECT(rtspsrc), "latency", 100, NULL);
 	if (secure) {
 		g_object_set(G_OBJECT(rtspsrc), "user-id", username.c_str(), NULL);
@@ -184,15 +184,15 @@ int rtspClient::playRtspUrl(std::string rtspUrl, bool secure, std::string userna
 	}
 
 	// Add Elements to the Bin
-	gst_bin_add_many(GST_BIN(pipeline), rtspsrc, rtph264depay, h264parse, avdec_h264, videoqueue0, videoconvert, video_sink, NULL);
+	gst_bin_add_many(GST_BIN(pipeline), rtspsrc, rtph264depay, avdec_h264, videoconvert, video_sink, NULL);
 
 	// Link confirmation
-	if (!gst_element_link_many(rtph264depay, h264parse, avdec_h264, NULL)) {
+	if (!gst_element_link_many(rtph264depay, avdec_h264, NULL)) {
 		g_warning("Linking part 1 Fail...");
 		return -2;
 	}
 	// Link confirmation
-	if (!gst_element_link_many(videoqueue0, videoconvert, video_sink, NULL)) {
+	if (!gst_element_link_many(videoconvert, video_sink, NULL)) {
 		g_warning("Linking part 2 Fail...");
 		return -4;
 	}
@@ -202,7 +202,7 @@ int rtspClient::playRtspUrl(std::string rtspUrl, bool secure, std::string userna
 		g_warning("Linking to part 1 Fail...");
 	}
 	// Dynamic Pad Creation
-	if (!g_signal_connect(avdec_h264, "pad-added", G_CALLBACK(on_pad_added), videoqueue0))
+	if (!g_signal_connect(avdec_h264, "pad-added", G_CALLBACK(on_pad_added), videoconvert))
 	{
 		g_warning("Linking to part 2 Fail...");
 	}
