@@ -351,6 +351,10 @@ namespace gstplayer {
 			MessageBox::Show("For RTSP Secure enter security details", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
 			return;
 		}
+		if (secure_check->Checked && (rtsp_url.rfind("rtsps", 0) != 0)) {
+			MessageBox::Show("For RTSP Secure use RTSPS protocol", "Error", MessageBoxButtons::OKCancel, MessageBoxIcon::Asterisk);
+			return;
+		}
 		/* Check for secure details if enabled*/
 		std::string username;
 		std::string password;

@@ -35,6 +35,10 @@ int impl_funcs::playRtspUrlVideo(std::string rtsp_url, bool secure, std::string 
 
 void impl_funcs::setEnvironmentVariable(System::String^ variable, System::String^ value) {
 	Environment::SetEnvironmentVariable(variable, value);
+	std::string var_name = msclr::interop::marshal_as<std::string>(variable);
+	if (var_name.compare("GST_DEBUG") == 0) {
+		gst_debug_set_threshold_from_string(msclr::interop::marshal_as<std::string>(value).c_str(), TRUE);
+	}
 	MessageBox::Show("Environment variable set successfully", "Done", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
 }
 
